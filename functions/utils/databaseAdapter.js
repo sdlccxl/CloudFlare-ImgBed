@@ -11,15 +11,13 @@ import { D1Database } from './d1Database.js';
  * @returns {Object} 数据库适配器实例
  */
 export function createDatabaseAdapter(env) {
-    // 检查是否配置了数据库
-    if (env.img_url && typeof env.img_url.get === 'function') {
-        // 使用KV存储
-        return new KVAdapter(env.img_url);
-    } else if (env.img_d1 && typeof env.img_d1.prepare === 'function') {
-        // 使用D1数据库
+    // 优先使用 D1 数据库（免费额度 10 万次写入/天），未配置 D1 时再降级使用 KV
+    if (env.img_d1 && typeof env.img_d1.prepare === 'function') {
         return new D1Database(env.img_d1);
+    } else if (env.img_url && typeof env.img_url.get === 'function') {
+        return new KVAdapter(env.img_url);
     } else {
-        console.error('No database configured. Please configure either KV (env.img_url) or D1 (env.img_d1).');
+        console.error('No database configured. Please configure either D1 (env.img_d1) or KV (env.img_url).');
         return null;
     }
 }
