@@ -505,8 +505,8 @@ async function uploadFileToTelegram(context, fullId, metadata, fileExt, fileName
         sendFunction = { 'url': 'sendDocument', 'type': 'document' };
     }
 
-    // 根据服务端压缩设置处理接口：从参数中获取serverCompress，如果为false，则使用sendDocument接口
-    if (url.searchParams.get('serverCompress') === 'false') {
+// 根据服务端压缩设置处理接口：默认使用sendDocument接口（带文件名原图），仅当传true时才压缩
+    if (url.searchParams.get('serverCompress') !== 'true') {
         sendFunction = { 'url': 'sendDocument', 'type': 'document' };
     }
 
